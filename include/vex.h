@@ -14,7 +14,7 @@
 #define opcolor (auto_select%2==0?'R':'B')
 
 #define pi 3.1415926
-#define wheel_r 2.54  //轮半径
-#define wheel_s 2.54  
-#define Ss 12      //侧轮到中心距离
-#define Sr 0.5     //竖轮到中心距离
+#define wheel_v 2.54  //轮半径
+#define wheel_h 2.54  
+#define dis_h 12      //侧轮到中心距离
+#define dis_v -0.5     //竖轮到中心距离

@@ -56,7 +56,7 @@ void drivercontrol(void) {
   float Tar;
   int n = 0; 
   while(true){
-    if((Controller.ButtonR1.pressing() && Controller.ButtonUp.pressing() && Controller.ButtonB.pressing())) break;
+    if((Controller.ButtonR1.pressing() && Controller.ButtonR2.pressing() && Controller.ButtonB.pressing())) break;
   }
   while (true) {
     Show();
@@ -80,9 +80,18 @@ void drivercontrol(void) {
     if(BtnD){
       pos.MoveTo(30,30,2000);
       task::sleep(200);
-      task::sleep(1000);
       //runauto();
     }
+
+    if(BtnU){
+      Intake(0);
+      Lift(70);
+      Move(-30,-30);
+      task::sleep(380);
+      Stop(hold);
+      task::sleep(400);
+    }
+    
     if(Ch1 > 50){
       sort_flag = true;
     }else if(Ch1 < -50){
@@ -113,12 +122,9 @@ void drivercontrol(void) {
         Intake(-100);
       }
       else {
-        if(fabs(Rotation.angle(deg) - 334) < 10 && abs(Ch2) < 20){
-          Intake(5);
-          Intake1.stop(coast);
-        }else{
-          Intake(0);
-        }
+        if(hand_state() == 'm' && Controller.Axis2.value() < 20) {Intake(10,2);Intake(0,1);}//防止摇臂环掉下
+        else if(hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake(30);//打高杆自动上第二环
+        else Intake(0);
       }
 
       if (R2) {
@@ -168,11 +174,11 @@ void drivercontrol(void) {
       }
 
       if(L1){
-        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?33:27;
+        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?33:26;
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
-        Lift_Tar = 160;
+        Lift_Tar = 164;
         task Lift_prosses = task(LiftToAngle);
       }
       if (abs(Ch2) > 15) {
@@ -193,6 +199,7 @@ void drivercontrol(void) {
       Controller.Screen.print("%f", pos.Y());
       Controller.Screen.setCursor(3, 1);
       Controller.Screen.print("%f",Inertial.rotation(deg));
+      task::sleep(1);
     }
     return 1;
   }

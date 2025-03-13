@@ -47,38 +47,31 @@ Pos::Pos(float x,float y,float delta_angle){
 Pos pos(0,0,0);
 
 void Pos::Update(){
-	double R = (Rotation_R.position(deg) - Last_position_r) * (pi/180) *wheel_r; 
-	double S = (Rotation_B.position(deg) - Last_position_s) * (pi/180) *wheel_s;
-	double h; 
-	double i;
-	double h2;
-  double degr = Inertial.rotation(deg);
-	double a = (degr*pi/180) - lastangle; 
-	if (fabs(a) != 0){
-		double r = R / a; 
-		i = a / 2.0;
-		double sinI = sin(i);
-		h = ((r + Sr) * sinI) * 2.0;
-
-		double r2 = S / a; 
-		h2 = ((r2 + Ss) * sinI) * 2.0;
+	double ARCv = (Rotation_R.position(deg) - Last_position_r) * (pi/180) *wheel_v; //弧长
+	double ARCh = (Rotation_B.position(deg) - Last_position_s) * (pi/180) *wheel_h;
+  double Rv,Rh;//半径
+	double Sv,Sh;//弦长 
+  double angle = Inertial.rotation(deg)*pi/180;//当前角度
+	double delta_angle = angle - lastangle; //角度差
+  double half_delta_angle = delta_angle/2.0;
+	if (delta_angle != 0){
+		Rv = (ARCv / delta_angle) + dis_v; 
+    Rh = (ARCh / delta_angle) + dis_h;
+		double sinI = sin(half_delta_angle);
+		Sv = Rv*sinI*2.0;
+		Sh = Rh*sinI*2.0;
+	}else{
+		Sv = ARCv;
+    Sh = ARCh;
 	}
-	else{
-		h = R;
-		i = 0;
-		h2 = S;
-	}
-	double p = i + lastangle; 
-	double cosP = cos(p);
-	double sinP = sin(p);
+	double temp_angle = half_delta_angle + lastangle; 
+	double cosP = cos(temp_angle);
+	double sinP = sin(temp_angle);
 
-	y += h * cosP;
-	x += h * sinP;
+	y += (Sv*cosP - Sh*sinP);
+	x += (Sv*sinP + Sh*cosP);
 
-	y += h2 * -sinP; 
-	x += h2 * cosP; 
-
-  lastangle = (degr*pi/180);
+  lastangle = angle;
   Last_position_r = Rotation_R.position(deg);
   Last_position_s = Rotation_B.position(deg);
 }
@@ -298,22 +291,27 @@ int LiftToAngle(){
     float Last_err = err;
     float acc_err = 0;
     float out = 0;
+    timer break_time;
     while(Lift_in_prosses && fabs(err) > 2){
       cur = Rotation.angle(deg) > 350?0:Rotation.angle(deg);
       err = Lift_Tar-cur;
 
       PID p = cur > 30?PID(0.6,0,0.5):PID(1.5,0,1);
       out = p.OUT(err,Last_err,acc_err);
-      if(fabs(out) < 20) out = out<0?-12:20;
+      if(fabs(out) < 20) out = out<0?-10:20;
       Lift(out);
 
       Last_err = err;
       acc_err+=err;
 
       task::sleep(10);
+
+      if(fabs(err) > 1) break_time = 0;
+      if(break_time > 40)break;
+      
     }
     Lift(0);
-    Lift_in_prosses = true;
+    Lift_in_prosses = false;
     return 0;
 }
 //--------------------------------------------------------------------------------
@@ -343,16 +341,10 @@ void Intake_control(){
     if(sort_time > 110 && sort_time < 300 && sort_flag) Intake2.spin(fwd,-1,volt);
     else Intake2.spin(fwd,0.128 * intake_power_2,volt);
     
-  }else{
-    if(hand_state() == 'm' && Controller.Axis2.value() < 20) Intake2.spin(fwd,1.2,volt);//防止摇臂环掉下
-    else if(hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake2.spin(fwd,4,volt);//打高杆自动上第二环
-    else Intake2.stop(coast);
-  }
+  }else Intake2.stop(coast);
+  
 
-  if(intake_power_1 == 0 ){
-    if(hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake1.spin(fwd,6,volt);//打高杆自动上第二环
-    else Intake1.stop(coast);
-  }
+  if(intake_power_1 == 0 )Intake1.stop(coast);
   else Intake1.spin(fwd,0.128 * intake_power_1,volt);
 }
 //-----------------------------------------------------------------------
