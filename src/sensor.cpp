@@ -66,6 +66,6 @@ bool self_check(){
 
 char hand_state(){
     if (Rotation.angle(deg) > 355 || Rotation.angle(deg) < 20) return 'l';
-    if (Rotation.angle(deg) < 35) return 'm';
+    if (Rotation.angle(deg) < 40) return 'm';
     return 'h';
 }

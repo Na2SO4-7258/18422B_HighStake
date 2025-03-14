@@ -2,6 +2,7 @@
 #include "motorcontrol.h"
 #include "sensor.h"
 #include "vex.h"
+#include "image.h"
 
 using namespace vex;
 vex::competition Competition;
@@ -9,6 +10,7 @@ using signature = vision::signature;
 using code = vision::code;
 
 void Initializing() {
+  Brain.Screen.drawImageFromBuffer(image, 0, 0, sizeof(image));
   Brain.Screen.setFont(vex::fontType::mono40);
   int color = 0;
   timer printtime;
@@ -174,7 +176,7 @@ void drivercontrol(void) {
       }
 
       if(L1){
-        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?33:26;
+        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?33:27;
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
@@ -184,8 +186,13 @@ void drivercontrol(void) {
       if (abs(Ch2) > 15) {
         Lift(Ch2);
         Lift_in_prosses = false;
+        lift_self_check = false;
       }else if(!Lift_in_prosses) {
-        Lift(0);
+        if(lift_self_check && Lift_Tar == 33){
+          if(((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) > Lift_Tar+2) Lift(-0.5);
+          else if (((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) < Lift_Tar-2) Lift(8);
+        }
+        else Lift(0);
       }
 
     }
@@ -210,10 +217,6 @@ void drivercontrol(void) {
     Hook.close();
     Inertial.startCalibration();
     Initializing();
-
-    if(!self_check()){
-
-    }
 
     Competition.autonomous(autonomous);
 

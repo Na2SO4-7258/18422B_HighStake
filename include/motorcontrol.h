@@ -71,6 +71,7 @@ void Intake_control();
 //-------------------------------------
 
 //摇臂控制-------------------------------------------
+extern bool lift_self_check;//是否实时矫正位置
 extern bool Lift_in_prosses;//在LiftToAngle进程内的时候为真
 extern float Lift_Tar;
 void Lift(float Power,brakeType type = hold);

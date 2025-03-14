@@ -209,12 +209,12 @@ void Pos::MoveTo(float tar_x,float tar_y,int fulltime,MoveTo_Para Para){
     last_power = power;
     last_turn_power = turn_power;
     
-    Brain.Screen.printAt(100,60,"err_dis: %f",sqrt(err_x*err_x + err_y*err_y));
-    Brain.Screen.printAt(100,80,"err_ang: %f",err_ang);
-    Brain.Screen.printAt(100,100,"power: %f",lpower);
-    Brain.Screen.printAt(100,120,"turnpower: %f",turn_power);
-    Brain.Screen.printAt(100,140,"x: %f",x);
-    Brain.Screen.printAt(100,160,"y: %f",y);
+    // Brain.Screen.printAt(100,60,"err_dis: %f",sqrt(err_x*err_x + err_y*err_y));
+    // Brain.Screen.printAt(100,80,"err_ang: %f",err_ang);
+    // Brain.Screen.printAt(100,100,"power: %f",lpower);
+    // Brain.Screen.printAt(100,120,"turnpower: %f",turn_power);
+    // Brain.Screen.printAt(100,140,"x: %f",x);
+    // Brain.Screen.printAt(100,160,"y: %f",y);
 
     task::sleep(10);
   }
@@ -278,6 +278,7 @@ void Stop(brakeType type) {
 }
 
 //---------------------------------------------------------------------------------------
+bool lift_self_check = false;
 bool Lift_in_prosses = false;
 float Lift_Tar = 0;
 void Lift(float Power,brakeType type) {
@@ -286,6 +287,7 @@ void Lift(float Power,brakeType type) {
 }
 int LiftToAngle(){
     Lift_in_prosses = true;
+    lift_self_check = true;
     float cur = Rotation.angle(deg) > 350?0:Rotation.angle(deg);
     float err = Lift_Tar-cur;
     float Last_err = err;
@@ -296,9 +298,10 @@ int LiftToAngle(){
       cur = Rotation.angle(deg) > 350?0:Rotation.angle(deg);
       err = Lift_Tar-cur;
 
-      PID p = cur > 30?PID(0.6,0,0.5):PID(1.5,0,1);
+      PID p = cur > 30?PID(0.6,0,0.5):PID(1.3,0,1);
       out = p.OUT(err,Last_err,acc_err);
-      if(fabs(out) < 20) out = out<0?-10:20;
+      if(out > 0 && out < 20) out = 20;
+      if(out < 0 && out > -10) out = -10;
       Lift(out);
 
       Last_err = err;
