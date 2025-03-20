@@ -25,8 +25,8 @@ optical Optical(PORT6);
 distance DistanceSort(PORT7);
 
 pneumatics Pull(Brain.ThreeWirePort.B);
-pneumatics Hook(Brain.ThreeWirePort.C);
-pneumatics RaiseHand(Brain.ThreeWirePort.D);
+pneumatics Hook(Brain.ThreeWirePort.D);
+pneumatics RaiseHand(Brain.ThreeWirePort.C);
 
 rotation Rotation_R(PORT14);//竖轮
 rotation Rotation_B(PORT12);//横轮

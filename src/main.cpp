@@ -41,6 +41,7 @@ void runauto() {
     task::sleep(10);
   }
   switch (Auton) {
+    case 1:{auto_neg_16_R();break;}
   }
   
 }
@@ -57,9 +58,9 @@ void drivercontrol(void) {
   bool lift_flag = false;
   float Tar;
   int n = 0; 
-  while(true){
-    if((Controller.ButtonR1.pressing() && Controller.ButtonR2.pressing() && Controller.ButtonB.pressing())) break;
-  }
+  // while(true){
+  //   if((Controller.ButtonR1.pressing() && Controller.ButtonR2.pressing() && Controller.ButtonB.pressing())) break;
+  // }
   while (true) {
     Show();
     Ch1 = Controller.Axis1.value();
@@ -80,18 +81,17 @@ void drivercontrol(void) {
     BtnR = Controller.ButtonRight.pressing();
 
     if(BtnD){
-      pos.MoveTo(30,30,2000);
-      task::sleep(200);
-      //runauto();
+      runauto();
+      task::sleep(1000);
     }
 
     if(BtnU){
       Intake(0);
       Lift(70);
       Move(-30,-30);
-      task::sleep(380);
+      task::sleep(330);
       Stop(hold);
-      task::sleep(400);
+      task::sleep(300);
     }
     
     if(Ch1 > 50){
@@ -176,7 +176,7 @@ void drivercontrol(void) {
       }
 
       if(L1){
-        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?33:27;
+        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?34:27;
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
@@ -188,7 +188,7 @@ void drivercontrol(void) {
         Lift_in_prosses = false;
         lift_self_check = false;
       }else if(!Lift_in_prosses) {
-        if(lift_self_check && Lift_Tar == 33){
+        if(lift_self_check && Lift_Tar == 34){
           if(((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) > Lift_Tar+2) Lift(-0.5);
           else if (((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) < Lift_Tar-2) Lift(8);
         }

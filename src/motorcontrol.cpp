@@ -391,7 +391,7 @@ void GoForWard(float Power, float Target, float FullTime, PID pid) {
 
     Move(out, out);
     if (fabs(errL) < 10 || fabs(errR) < 10) break;
-    if(out > 10) lesspower_breaktime = 0;
+    if(fabs(out) > 10) lesspower_breaktime = 0;
   }
   Stop(hold);
 }

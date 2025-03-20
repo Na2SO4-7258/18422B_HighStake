@@ -1,1 +1,1 @@
-void auto_neg_06();
+void auto_neg_16_R();
