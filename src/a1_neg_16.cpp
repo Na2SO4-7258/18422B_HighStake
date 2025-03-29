@@ -1,6 +1,13 @@
 #include "auto.h"
 #include "motorcontrol.h"
 
+int temp1(){//等待打完环后再抬手
+    while(1) if(DistanceSort.objectDistance(mm) < 50) break;
+    task::sleep(100);
+    Lift(30);
+    return 1;
+}
+
 //14,-17,128
 void auto_neg_16_R(){
     //打联队
@@ -91,7 +98,7 @@ void auto_neg_16_R(){
     GoForWard(50,400,600);
     RaiseHand.close(); 
     CorrectHeading(0,700);
-    Lift(30);
+    task t1 = task(temp1);
     GoForWard(100,300,1000);
     Move(20,20);
     task::sleep(500);

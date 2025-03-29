@@ -189,13 +189,8 @@ void drivercontrol(void) {
         Lift(Ch2);
         Lift_in_prosses = false;
         lift_self_check = false;
-      }else if(!Lift_in_prosses) {
-        // if(lift_self_check && Lift_Tar == 29){
-        //   if(((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) > Lift_Tar+2) Lift(-5);
-        //   else if (((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) < Lift_Tar-2) Lift(8);
-        // }
-        Lift(0);
-      }
+      }else if(!Lift_in_prosses) Lift(0);
+      
 
     }
   }
