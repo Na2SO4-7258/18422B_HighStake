@@ -28,6 +28,8 @@ PID MOVETO_TURN_POWER(0.6,0,10);
 MoveTo_Para::MoveTo_Para(){
   break_distance_err=4;
   break_power=10;
+  stop_turn_dis = 25;
+  must_turn_first = false;
   Power_PID = MOVETO_POWER;
   Turn_Power_PID = MOVETO_TURN_POWER;
 }
@@ -126,7 +128,7 @@ void Pos::MoveTo(float tar_x,float tar_y,int fulltime,MoveTo_Para Para){
   while(err_ang < -90)err_ang += 180;
   
   timer lesspower_break_time;
-  while(fabs(err_ang) > 20 && lesspower_break_time < 40){
+  while((fabs(err_ang) > 20 || Para.must_turn_first)&& lesspower_break_time < 40){
     task::sleep(10);
     cur_x = this->x;
     cur_y = this->y;
@@ -183,7 +185,7 @@ void Pos::MoveTo(float tar_x,float tar_y,int fulltime,MoveTo_Para Para){
       if(turn_power > 0 && turn_power < 40)turn_power = 40;
       else if(turn_power < 0 && turn_power > -40)turn_power = -40; 
     }
-    if(fabs(err_ang) < 7 || distance < 25)turn_power = 0;
+    if(fabs(err_ang) < 7 || distance < Para.stop_turn_dis)turn_power = 0;
     
     //if(turn_power != 0)turn_power=slew(turn_power,last_turn_power,turn_power_maxchange);
   
@@ -325,6 +327,8 @@ float intake_power_1 = 0;
 float intake_power_2 = 0;
 bool sort_flag = true;
 timer self_time;
+bool stopring = false;
+
 void Intake(float Power,int flag) {
   if(flag == 0){
     intake_power_1 = Power;
@@ -342,8 +346,8 @@ void Intake_control(){
   //状态机
   if(intake_power_2 != 0){
     if(sort_time > 110 && sort_time < 300 && sort_flag) Intake2.spin(fwd,-1,volt);
+    else if(stopring && DistanceSort.objectDistance(mm) < 100 && get_color() != opcolor) Intake2.stop(hold);
     else Intake2.spin(fwd,0.128 * intake_power_2,volt);
-    
   }else Intake2.stop(coast);
   
 

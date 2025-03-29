@@ -30,6 +30,8 @@ typedef class MoveTo_Para{
     MoveTo_Para();
     float break_distance_err;//跳出距离
     float break_power;//跳出功率
+    float stop_turn_dis;//停止转动的距离
+    bool must_turn_first;//强制先矫正角度
     PID Power_PID=PID(0,0,0);//直行pid
     PID Turn_Power_PID=PID(0,0,0);//转动pid
 }MoveTo_Para;
@@ -66,6 +68,7 @@ extern float intake_power_1;
 extern float intake_power_2;
 extern bool sort_flag;//总开关
 extern timer self_time;//距离上一次看到自己的圈有多久
+extern bool stopring;//是否需要停环，是的话会把环停在顶端而非打出
 void Intake (float Power,int flag = 0); 
 void Intake_control();
 //-------------------------------------

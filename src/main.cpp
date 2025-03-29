@@ -42,6 +42,7 @@ void runauto() {
   }
   switch (Auton) {
     case 1:{auto_neg_16_R();break;}
+    case 2:{auto_neg_16_B();break;}
   }
   
 }
@@ -56,6 +57,7 @@ void drivercontrol(void) {
   bool hand_flag = false, hand_CD;
   timer sorttime;
   bool lift_flag = false;
+  bool end_game = false;
   float Tar;
   int n = 0; 
   // while(true){
@@ -95,7 +97,7 @@ void drivercontrol(void) {
     }
     
     if(Ch1 > 50){
-      sort_flag = true;
+      end_game = true;
     }else if(Ch1 < -50){
       sort_flag = false;
     }
@@ -124,8 +126,8 @@ void drivercontrol(void) {
         Intake(-100);
       }
       else {
-        if(hand_state() == 'm' && Controller.Axis2.value() < 20) {Intake(10,2);Intake(0,1);}//防止摇臂环掉下
-        else if(hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake(30);//打高杆自动上第二环
+        if(!end_game && hand_state() == 'm' && Controller.Axis2.value() < 20) {Intake(10,2);Intake(0,1);}//防止摇臂环掉下
+        else if(!end_game && hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake(30);//打高杆自动上第二环
         else Intake(0);
       }
 
@@ -176,7 +178,7 @@ void drivercontrol(void) {
       }
 
       if(L1){
-        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?34:27;
+        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?29:26;
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
@@ -188,11 +190,11 @@ void drivercontrol(void) {
         Lift_in_prosses = false;
         lift_self_check = false;
       }else if(!Lift_in_prosses) {
-        if(lift_self_check && Lift_Tar == 34){
-          if(((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) > Lift_Tar+2) Lift(-0.5);
-          else if (((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) < Lift_Tar-2) Lift(8);
-        }
-        else Lift(0);
+        // if(lift_self_check && Lift_Tar == 29){
+        //   if(((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) > Lift_Tar+2) Lift(-5);
+        //   else if (((Rotation.angle(deg) > 350)?0:Rotation.angle(deg)) < Lift_Tar-2) Lift(8);
+        // }
+        Lift(0);
       }
 
     }
