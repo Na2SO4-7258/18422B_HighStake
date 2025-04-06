@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-#define auto_select 1
+#define auto_select 4
 #define opcolor (auto_select%2==0?'R':'B')
 
 #define pi 3.1415926

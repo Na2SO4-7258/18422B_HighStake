@@ -300,10 +300,10 @@ int LiftToAngle(){
       cur = Rotation.angle(deg) > 350?0:Rotation.angle(deg);
       err = Lift_Tar-cur;
 
-      PID p = cur > 30?PID(0.6,0,0.5):PID(1.3,0,1);
+      PID p = cur > 30?PID(0.48,0,0.7):PID(1.3,0,1);
       out = p.OUT(err,Last_err,acc_err);
       if(out > 0 && out < 20) out = 20;
-      if(out < 0 && out > -10) out = -10;
+      if(out < 0 && out > -2) out = -2;
       Lift(out);
 
       Last_err = err;
@@ -312,7 +312,7 @@ int LiftToAngle(){
       task::sleep(10);
 
       if(fabs(err) > 1) break_time = 0;
-      if(break_time > 40)break;
+      if(break_time > 10)break;
       
     }
     Lift(0);

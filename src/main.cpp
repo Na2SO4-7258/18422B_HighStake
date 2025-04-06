@@ -43,6 +43,8 @@ void runauto() {
   switch (Auton) {
     case 1:{auto_neg_16_R();break;}
     case 2:{auto_neg_16_B();break;}
+    case 3:{auto_pos_stake_R();break;}
+    case 4:{auto_pos_stake_B();break;}
   }
   
 }
@@ -182,7 +184,7 @@ void drivercontrol(void) {
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
-        Lift_Tar = 164;
+        Lift_Tar = 162;
         task Lift_prosses = task(LiftToAngle);
       }
       if (abs(Ch2) > 15) {
