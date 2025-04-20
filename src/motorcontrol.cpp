@@ -232,7 +232,7 @@ void Pos::Init(){
 }
 //----------------------------------------------------------------------------
 char get_color() {
-  if (DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10) {
+  if (DistanceSort.objectDistance(mm) < 100) {
     if(Optical.hue() > 100 && Optical.hue() < 300) return 'B';
     else if(Optical.hue() < 30 || Optical.hue() > 350) return 'R';
     else return ' ';
@@ -345,7 +345,7 @@ void Intake_control(){
   
   //状态机
   if(intake_power_2 != 0){
-    if(sort_time > 110 && sort_time < 300 && sort_flag) Intake2.spin(fwd,-1,volt);
+    if(sort_time > 120 && sort_time < 300 && sort_flag) Intake2.spin(fwd,-1,volt);
     else if(stopring && DistanceSort.objectDistance(mm) < 100 && get_color() != opcolor) Intake2.stop(hold);
     else Intake2.spin(fwd,0.128 * intake_power_2,volt);
   }else Intake2.stop(coast);

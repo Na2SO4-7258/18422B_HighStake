@@ -45,6 +45,8 @@ void runauto() {
     case 2:{auto_neg_16_B();break;}
     case 3:{auto_pos_stake_R();break;}
     case 4:{auto_pos_stake_B();break;}
+    case 5:{auto_pos_14_R();break;}
+    case 6:{auto_pos_14_B();break;}
   }
   
 }
@@ -129,39 +131,30 @@ void drivercontrol(void) {
       }
       else {
         if(!end_game && hand_state() == 'm' && Controller.Axis2.value() < 20) {Intake(10,2);Intake(0,1);}//防止摇臂环掉下
-        else if(!end_game && hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100 && DistanceSort.objectDistance(mm) > 10)) Intake(30);//打高杆自动上第二环
+        else if(!end_game && hand_state() == 'h' && !(DistanceSort.objectDistance(mm) < 100)) Intake(30);//打高杆自动上第二环
         else Intake(0);
       }
 
       if (R2) {
-        if (pull_CD) {
-          pull_CD = false;
-          pull_flag = !pull_flag;
-        }
-      } else {
-        pull_CD = true;
-      }
+        if (pull_CD) {pull_CD = false;pull_flag = !pull_flag;}
+      } else pull_CD = true;
+      
+      if(BtnL) pull_flag = false;
 
-      if (pull_flag) {
-        Pull.open();
-      } else {
-        Pull.close();
-      }
+      if (pull_flag) Pull.open();
+      else Pull.close();
 
       if (BtnA) {
         if (hook_CD) {
           hook_CD = false;
           hook_flag = !hook_flag;
         }
-      } else {
-        hook_CD = true;
-      }
+      } else hook_CD = true;
+      
 
-      if (hook_flag){
-        Hook.open();
-      } else {
-        Hook.close();
-      }
+      if (hook_flag)Hook.open();
+      else Hook.close();
+      
 
       
       if (BtnB) {
@@ -180,7 +173,7 @@ void drivercontrol(void) {
       }
 
       if(L1){
-        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?29:26;
+        Lift_Tar = (Rotation.angle(deg) > 350?0:Rotation.angle(deg))>50?28:24;
         task Lift_prosses = task(LiftToAngle);
       }
       if(BtnX){
